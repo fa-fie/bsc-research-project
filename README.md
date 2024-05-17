@@ -1,1 +1,0 @@
-# bsc-research-project
