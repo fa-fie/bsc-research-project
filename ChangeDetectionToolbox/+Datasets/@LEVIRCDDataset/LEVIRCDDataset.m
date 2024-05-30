@@ -6,16 +6,15 @@ classdef LEVIRCDDataset < Datasets.CDDataset
             obj.refStr = 'LEVIR Change Detection dataset';
             
             obj.loaders.ref = @Datasets.Loaders.tiffLoader;  % Use .tif labels
-            %
-            % For test phase declare a new subclass that extends
-            % LEVIRCDDataset and change some behaviours
         end
         function initFileSys(obj)
-            % Load files (training set only)
+            % Load files
+            % Important: the data path needs to include the dataset
+            % directory (train/test/val)!
 
-            t1Folder = dir(fullfile(obj.dataPath, 'train', 'A', '*.tiff'));
-            t2Folder = dir(fullfile(obj.dataPath, 'train', 'B', '*.tiff'));
-            labFolder = dir(fullfile(obj.dataPath, 'train', 'label', '*.tiff'));
+            t1Folder = dir(fullfile(obj.dataPath, 'A', '*.tiff'));
+            t2Folder = dir(fullfile(obj.dataPath, 'B', '*.tiff'));
+            labFolder = dir(fullfile(obj.dataPath, 'label', '*.tiff'));
             
             for ii = 1:length(t1Folder)
                 obj.t1List{ii} = fullfile(t1Folder(ii).folder, t1Folder(ii).name);

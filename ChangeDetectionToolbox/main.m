@@ -36,22 +36,26 @@ PAUSE_EACH_ITER_ = GO_SHOW_CHANGE | GO_SHOW_MASK | GO_SHOW_PRETTIFIED | GO_SHOW_
 %{
 	Available algorithms: CVA, DPCA, ImageDiff, ImageRatio, ImageRegr, IRMAD, MAD, PCAkMeans, PCDA
 
-	Available datasets: AirChangeDataset, BernDataset, OSCDDataset, OttawaDataset, TaizhouDataset
+	Available datasets: AirChangeDataset, BernDataset, OSCDDataset,
+ OttawaDataset, TaizhouDataset, LEVIRCDDataset
+
+    NOTE: For LEVIRCDDataset, the data path needs to include the dataset
+    directory (train/test/val)!
 
 	Available binaryzation algorithms: FixedThre, KMeans, OTSU
 
 	Available metrics: AUC, FMeasure, Kappa, OA, Recall, UA
 %}
-ALGS = {'PCAkMeans'}; %, 'DPCA', 'ImageRatio', 'ImageRegr', 'IRMAD', ...
+ALGS = {'IRMAD', 'CVA'}; %, 'DPCA', 'ImageRatio', 'ImageRegr', 'IRMAD', ...
     %'PCAkMeans', 'PCDA'};
 DATASETS = {'LEVIRCDDataset'};
-THRE_ALGS = {'OTSU'};
+THRE_ALGS = {'KMeans'};
 METRICS = {'AUC', 'ConfusionMatrix'};
 %{'OA', 'UA', 'Recall', 'FMeasure', 'AUC', 'Kappa'};
 
 CONFIG_ALGS = {{}, {}, {}, {}, {}, {}, {}, {}, {}};
 CONFIG_DATASETS = {
-    {''}
+    {'C:\Users\Owner\Documents\University\Y3\Q4\Research Project\Datasets\LEVIR-dataset\LEVIR-CD_tiff_cut_2\test'}
 };
 CONFIG_THRE_ALGS = {{}};
 CONFIG_METRICS = {{}, {}, {}, {}, {}, {}};
