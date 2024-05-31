@@ -56,7 +56,7 @@ samples = random.sample(all_names, num_samples)
 for sample in samples:
     a_img = cv2.imread(os.path.join(a_folder_in, sample))
     b_img = cv2.imread(os.path.join(b_folder_in, sample))
-    label_img = reduce_binary_to_2D(cv2.imread(os.path.join(label_folder_in, sample)))
+    label_img = reduce_to_one_band(cv2.imread(os.path.join(label_folder_in, sample)))
 
     cv2.imwrite(os.path.join(a_folder_out, sample), a_img)
     cv2.imwrite(os.path.join(b_folder_out, sample), b_img)

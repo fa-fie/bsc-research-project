@@ -42,7 +42,7 @@ def cut_image_into_parts(dir, rel_path, fpath, datatype, dir_out, params):
     is_binary = is_binary_file(dir, rel_path, fpath, params['dataset'])
 
     if is_binary:
-        image = reduce_binary_to_2D(image)
+        image = reduce_to_one_band(image)
 
     amt_pixels = [int(image.shape[0] / params['amount_one_side']), int(image.shape[1] / params['amount_one_side'])]
     

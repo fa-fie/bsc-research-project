@@ -28,7 +28,7 @@ def is_binary_file(dir, rel_path, fpath, dataset):
         sys.exit('Invalid dataset selected')
 
 # Make sure binary files only have one "band" (i.e., 2 dimensional)
-def reduce_binary_to_2D(image):
+def reduce_to_one_band(image):
     img_max = np.maximum.reduce(image, 2)
     img_min = np.minimum.reduce(image, 2)
 

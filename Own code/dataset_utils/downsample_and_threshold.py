@@ -11,14 +11,14 @@ from util_functions import *
 # => These variables should be set to the desired settings!
 
 # Thresholding binary maps
-min = 0     # Minimum value of a band in one pixel
-max = 255   # Maximum value of a band in one pixel
-threshold = max / 2     # Threshold for setting a pixel to be 'true' (i.e., change)
+min = 1     # Minimum value of a band in one pixel
+max = 2     # Maximum value of a band in one pixel
+threshold = min + (max - min) / 2.0     # Threshold for setting a pixel to be 'true' (i.e., change)
 inclusive_upper = True  # Whether a value equal to the threshold value should be set to 'true' (i.e., change)
 
 # Downsampling
 interpolation_alg = cv2.INTER_AREA  # The interpolation algorithm for downsampling
-downsample_factor = 16   # The inverse factor of downsampling (e.g., 2 results in 1/2 of the size)
+downsample_factor = 4   # The inverse factor of downsampling (e.g., 2 results in 1/2 of the size)
 
 # Dataset and directories
 
@@ -26,8 +26,8 @@ downsample_factor = 16   # The inverse factor of downsampling (e.g., 2 results i
 dir_in = ''
 # The directory to save the modified dataset to
 dir_out = dir_in + '_factor_' + str(downsample_factor) 
-datatype = 'tiff' # The image datatype
-dataset = 'LEVIR' # The dataset name, selected from: AirChange, LEVIR
+datatype = 'tif' # The image datatype
+dataset = 'OSCD' # The dataset name, selected from: AirChange, LEVIR, OSCD
 
 # -----------------------
 
@@ -53,8 +53,9 @@ def downsample_and_threshold(dir, rel_path, fpath, datatype, dir_out, params):
     
     image = cv2.imread(fpath)
     
-    if is_binary_file(dir, rel_path, fpath, params['dataset']):
-        image = reduce_binary_to_2D(image)
+    # OSCD has one-band images
+    if params['dataset'] == 'OSCD' or is_binary_file(dir, rel_path, fpath, params['dataset']):
+        image = reduce_to_one_band(image)
 
     # Resize the image
     size_1 = int(image.shape[0] * 1 / params['downsample_factor'])

@@ -41,7 +41,7 @@ def cut_image_corner(dir, rel_path, fpath, datatype, dir_out, params):
     is_binary = is_binary_file(dir, rel_path, fpath, params['dataset'])
 
     if is_binary:
-        image = reduce_binary_to_2D(image)
+        image = reduce_to_one_band(image)
 
     if os.path.basename(fpath) == 'B01.tif':
         print(f"Size img {image.shape}")
