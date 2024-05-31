@@ -42,15 +42,7 @@ def cut_image_into_parts(dir, rel_path, fpath, datatype, dir_out, params):
     is_binary = is_binary_file(dir, rel_path, fpath, params['dataset'])
 
     if is_binary:
-        img_max = np.maximum.reduce(image, 2)
-        img_min = np.minimum.reduce(image, 2)
-
-        # Safety check
-        if not np.all(img_max == img_min):
-            sys.exit('Invalid binary result file')
-
-        # 'Reduce' the image
-        image = img_max
+        image = reduce_binary_to_2D(image)
 
     amt_pixels = [int(image.shape[0] / params['amount_one_side']), int(image.shape[1] / params['amount_one_side'])]
     

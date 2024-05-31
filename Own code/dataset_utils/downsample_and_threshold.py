@@ -54,15 +54,7 @@ def downsample_and_threshold(dir, rel_path, fpath, datatype, dir_out, params):
     image = cv2.imread(fpath)
     
     if is_binary_file(dir, rel_path, fpath, params['dataset']):
-        img_max = np.maximum.reduce(image, 2)
-        img_min = np.minimum.reduce(image, 2)
-
-        # Safety check
-        if not np.all(img_max == img_min):
-            sys.exit('Invalid binary result file')
-
-        # 'Reduce' the image
-        image = img_max
+        image = reduce_binary_to_2D(image)
 
     # Resize the image
     size_1 = int(image.shape[0] * 1 / params['downsample_factor'])

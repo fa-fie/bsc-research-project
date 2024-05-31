@@ -1,5 +1,6 @@
 import os
 import sys
+import numpy as np
 
 # Recursively search a directory, applying a given function to each file if it is of a specific datatype
 def rec_dir(dir, rel_path, datatype, dir_out, f, fparams):
@@ -25,3 +26,15 @@ def is_binary_file(dir, rel_path, fpath, dataset):
         return 'Labels' in rel_path
     else:
         sys.exit('Invalid dataset selected')
+
+# Make sure binary files only have one "band" (i.e., 2 dimensional)
+def reduce_binary_to_2D(image):
+    img_max = np.maximum.reduce(image, 2)
+    img_min = np.minimum.reduce(image, 2)
+
+    # Safety check
+    if not np.all(img_max == img_min):
+        sys.exit('Invalid binary result file')
+
+    # 'Reduce' the image
+    return img_max

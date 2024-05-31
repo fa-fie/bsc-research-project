@@ -56,18 +56,8 @@ samples = random.sample(all_names, num_samples)
 for sample in samples:
     a_img = cv2.imread(os.path.join(a_folder_in, sample))
     b_img = cv2.imread(os.path.join(b_folder_in, sample))
-    label_img = cv2.imread(os.path.join(label_folder_in, sample))
+    label_img = reduce_binary_to_2D(cv2.imread(os.path.join(label_folder_in, sample)))
 
     cv2.imwrite(os.path.join(a_folder_out, sample), a_img)
     cv2.imwrite(os.path.join(b_folder_out, sample), b_img)
-
-    img_max = np.maximum.reduce(label_img, 2)
-    img_min = np.minimum.reduce(label_img, 2)
-
-    # Safety check
-    if not np.all(img_max == img_min):
-        sys.exit('Invalid binary result file')
-
-    # 'Reduce' the label image
-    label_img = img_max
     cv2.imwrite(os.path.join(label_folder_out, sample), label_img)

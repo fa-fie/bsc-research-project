@@ -41,15 +41,7 @@ def cut_image_corner(dir, rel_path, fpath, datatype, dir_out, params):
     is_binary = is_binary_file(dir, rel_path, fpath, params['dataset'])
 
     if is_binary:
-        img_max = np.maximum.reduce(image, 2)
-        img_min = np.minimum.reduce(image, 2)
-
-        # Safety check
-        if not np.all(img_max == img_min):
-            sys.exit('Invalid binary result file')
-
-        # 'Reduce' the image
-        image = img_max
+        image = reduce_binary_to_2D(image)
 
     if os.path.basename(fpath) == 'B01.tif':
         print(f"Size img {image.shape}")
