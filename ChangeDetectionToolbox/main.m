@@ -2,28 +2,15 @@
 clear all, close all;
 
 %% Global options
-GO_SHOW_CHANGE = false;	% Show the difference image (DI)
-GO_SHOW_MASK = false;	% Show the change map (CM)
-GO_SHOW_PRETTIFIED = true;	% Show the prettified detection results
-GO_SHOW_ROC_CURVE = false;	% Plot the ROC curve
 
-GO_BAND_PRE_NORM = false;	% Perform a band-wise pre-normalization on the inputs
-
-GO_CONFIG_ROC = {};
-GO_VERBOSE = true;
-GO_SAVE_RESULTS = true;
-GO_OUT_FILE = '';		    % File to save the results
-GO_OUT_FILE_TYPE = 'xls';	% Filetype for saving the results
-GO_ALL_RESULTS = true;      % Save all metric values, not only average
-
-% If the file already exists, append a number until no file under that name
-% exists
-GO_OUT_FILE_PATH = append(GO_OUT_FILE, '.', GO_OUT_FILE_TYPE);
-idx = 1;
-while isfile(GO_OUT_FILE_PATH)
-    GO_OUT_FILE_PATH = append(GO_OUT_FILE, '-', string(idx), '.', GO_OUT_FILE_TYPE);
-    idx = idx + 1;
-end
+% Show the difference image (DI)
+GO_SHOW_CHANGE = false;
+% Show the change map (CM)
+GO_SHOW_MASK = false;
+% Show the prettified detection results
+GO_SHOW_PRETTIFIED = false;
+% Plot the ROC curve
+GO_SHOW_ROC_CURVE = false;
 
 % PAUSE MODES:
 % -1: resume next iteration when all figures closed;
@@ -32,20 +19,33 @@ GO_PAUSE_MODE = 1;
 
 PAUSE_EACH_ITER_ = GO_SHOW_CHANGE | GO_SHOW_MASK | GO_SHOW_PRETTIFIED | GO_SHOW_ROC_CURVE;
 
-%% Opt and configure the IMPORTANT ones
-%{
-	Available algorithms: CVA, DPCA, ImageDiff, ImageRatio, ImageRegr, IRMAD, MAD, PCAkMeans, PCDA
+GO_CONFIG_ROC = {};
+% Whether to print to the console
+GO_VERBOSE = true;
+% Whether to save the results
+GO_SAVE_RESULTS = true;
+% File to save the results
+FILE_PATH = 'C:\Users\Owner\Documents\University\Y3\Q4\Research Project\Results\';
+GO_OUT_FILE = append(FILE_PATH, 'justtestingyas');% 'LEVIR-factor-1-29.05-testset-cut-IRMAD-CVA-KMeans');
 
-	Available datasets: AirChangeDataset, BernDataset, OSCDDataset,
- OttawaDataset, TaizhouDataset, LEVIRCDDataset
+% If the file already exists, append a number until no file under that name
+% exists
+GO_OUT_FILE_PATH = append(GO_OUT_FILE, '.xls');
+idx = 1;
+while isfile(GO_OUT_FILE_PATH)
+    GO_OUT_FILE_PATH = append(GO_OUT_FILE, '-', string(idx), '.xls');
+    idx = idx + 1;
+end
 
-    NOTE: For LEVIRCDDataset, the data path needs to include the dataset
-    directory (train/test/val)!
+%% Configuration of algorithms, datasets, thresholding, metrics
 
-	Available binaryzation algorithms: FixedThre, KMeans, OTSU
+% Available algorithms: CVA, DPCA, ImageDiff, ImageRatio, ImageRegr, IRMAD, MAD, PCAkMeans, PCDA
+% Available datasets: AirChangeDataset, BernDataset, OSCDDataset, OttawaDataset, TaizhouDataset, LEVIRCDDataset
+% -> NOTE: For LEVIRCDDataset, the data path needs to include the dataset directory (train/test/val)!
+% Available binaryzation algorithms: FixedThre, KMeans, OTSU
+% Available metrics: AUC, FMeasure, Kappa, OA, Recall, UA, ConfusionMatrix
+% -> ConfusionMatrix will output TP, FP, FN, TN absolute values (pixel counts)
 
-	Available metrics: AUC, FMeasure, Kappa, OA, Recall, UA
-%}
 ALGS = {'IRMAD', 'CVA'}; %, 'DPCA', 'ImageRatio', 'ImageRegr', 'IRMAD', ...
     %'PCAkMeans', 'PCDA'};
 DATASETS = {'LEVIRCDDataset'};
@@ -53,9 +53,11 @@ THRE_ALGS = {'KMeans'};
 METRICS = {'AUC', 'ConfusionMatrix'};
 %{'OA', 'UA', 'Recall', 'FMeasure', 'AUC', 'Kappa'};
 
+% Whether to perform a band-wise pre-normalization on the inputs, requires a setting per algorithm
+CONFIG_BAND_PRE_NORM = {false, true};
 CONFIG_ALGS = {{}, {}, {}, {}, {}, {}, {}, {}, {}};
 CONFIG_DATASETS = {
-    {'C:\Users\Owner\Documents\University\Y3\Q4\Research Project\Datasets\LEVIR-dataset\LEVIR-CD_tiff_cut_2\test'}
+    {'C:\Users\Owner\Documents\University\Y3\Q4\Research Project\Datasets\LEVIR-dataset\LEVIR-CD_tiff_downsampled\LEVIR-CD_tiff_factor_16\test'}
 };
 CONFIG_THRE_ALGS = {{}};
 CONFIG_METRICS = {{}, {}, {}, {}, {}, {}};
@@ -68,6 +70,7 @@ if GO_SHOW_ROC_CURVE
     end
 end
 
+% For debugging purposes
 iterIdx = 0;
 
 % Loop through all configured options (all combinations)
@@ -89,19 +92,26 @@ for aa = 1:length(ALGS)
             for ii = 1:nMetrics
                 metrics{ii} = Metrics.(METRICS{ii})(CONFIG_METRICS{ii}{:});
             end
+            nRows = iterDS.len;
+            fileProps = cell(nRows, 1);
             
             %% Main loop
-            n = 0;
+            curr = 0;
             while(iterDS.hasNext())
-                n = n + 1;
-                
-                % Fetch data
-                [t1, t2, ref] = iterDS.nextChunk();
+                curr = curr + 1;
 
-                iterIdx = iterIdx + 1;
-                fprintf('NUMBER: %d\n', iterIdx);
+                % Fetch data
+                [t1, t2, ref, fprops] = iterDS.nextChunk();
+
+                if GO_VERBOSE
+                    % For debugging purposes
+                    iterIdx = iterIdx + 1;
+                    fprintf('NUMBER: %d\n', iterIdx);
+                end
+
+                fileProps{curr} = fprops; 
                 
-                if GO_BAND_PRE_NORM
+                if CONFIG_BAND_PRE_NORM{aa}
                     % Perform a band-wise z-score normalization before any further
                     % algorithm is applied
                     fcnNorm = @Utilities.normMeanStd;
@@ -119,6 +129,7 @@ for aa = 1:length(ALGS)
                     for ii = 1:nMetrics
                         m = metrics{ii};
 
+                        % ConfusionMatrix values will not be printed
                         if ~strcmp(METRICS{ii}, 'ConfusionMatrix')
                             fprintf('type: %s\n', METRICS{ii});
                             fprintf('\tnewest: %f\n', m.val(end));
@@ -175,25 +186,33 @@ for aa = 1:length(ALGS)
                 end
             end
             
-            %% Collate and save results
-
-            results = {};
-            if GO_ALL_RESULTS
+            %% If enabled, collate and save results
+            
+            if GO_SAVE_RESULTS
+                results = {};
                 hasConfMatr = any(strcmp(METRICS,'ConfusionMatrix'));
 
                 if nMetrics >= 1
                     if hasConfMatr
-                        results = cell(n, nMetrics + 6);
+                        results = cell(nRows, nMetrics + 13);
                     else
-                        results = cell(n, nMetrics + 3);
+                        results = cell(nRows, nMetrics + 10);
                     end
-             
-                    for ii = 1:n
+                
+                    for ii = 1:nRows
                         results(ii, 1) = {alg.algName};
                         results(ii, 2) = {threAlg.algName};
-                        results(ii, 3) = {DATASET};
+                        results(ii, 3) = {CONFIG_BAND_PRE_NORM{aa}};
+                        results(ii, 4) = {DATASET};
+                        results(ii, 5) = CONFIG_DATASETS{dd};
+                        fProps = fileProps{ii};
+                        results(ii, 6) = fProps(1);
+                        results(ii, 7) = fProps(2);
+                        results(ii, 8) = fProps(3);
+                        results(ii, 9) = fProps(4);
+                        results(ii, 10) = fProps(5);
 
-                        add = 3;
+                        add = 10;
                         for jj = 1:nMetrics
                             if strcmp(METRICS{jj}, 'ConfusionMatrix')
                                 results(ii, jj + add) = metrics{jj}.val((ii - 1) * 4 + 1);
@@ -208,43 +227,28 @@ for aa = 1:length(ALGS)
                         end
                     end
                 end
-            else
-                for ii = 1:nMetrics
-                    results{ii} = metrics{ii}.avg;
-                end
-            end
-            
-            if GO_SAVE_RESULTS
-                [~, ~, ext] = fileparts(GO_OUT_FILE_PATH);
-                switch ext
-                    % TODO
-                    % case '.mat'
-                    %    save(GO_OUT_FILE_PATH, 'results');
-                    case {'.xls', '.xlsx'}
-                        if ~isfile(GO_OUT_FILE_PATH)
-                            % The file does not exist yet, create
 
-                            header = ["name" "threAlg" "dataset"];
-                            idx = 4;
-                            for jj = 1:nMetrics
-                                if strcmp(METRICS{jj}, 'ConfusionMatrix')
-                                    header(idx) = "TP";
-                                    header(idx + 1) = "FP";
-                                    header(idx + 2) = "TN";
-                                    header(idx + 3) = "FN";
-                                    idx = idx + 4;
-                                else
-                                    header(idx) = METRICS{jj};
-                                    idx = idx + 1;
-                                end
-                            end
+                if ~isfile(GO_OUT_FILE_PATH)
+                    % The file does not exist yet, create it
 
-                            writematrix(header, GO_OUT_FILE_PATH);
+                    header = ["name" "threAlg" "normalized" "dataset" "path" "t1Name" "t2Name" "refName" "refWidth" "refHeight"];
+                    idx = 11;
+                    for jj = 1:nMetrics
+                        if strcmp(METRICS{jj}, 'ConfusionMatrix')
+                            header(idx) = "TP";
+                            header(idx + 1) = "FP";
+                            header(idx + 2) = "TN";
+                            header(idx + 3) = "FN";
+                            idx = idx + 4;
+                        else
+                            header(idx) = METRICS{jj};
+                            idx = idx + 1;
                         end
-                        writecell(results, GO_OUT_FILE_PATH, 'WriteMode', 'append');
-                    otherwise
-                        error('Unsupported type of file');
+                    end
+                    
+                    writematrix(header, GO_OUT_FILE_PATH);
                 end
+                writecell(results, GO_OUT_FILE_PATH, 'WriteMode', 'append');
             end
         end
     end

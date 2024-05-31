@@ -44,7 +44,7 @@ classdef CDDIterator < handle
             ref = obj.refList_{obj.index_};
         end
         
-        function [im_t1, im_t2, im_ref] = nextChunk(obj)
+        function [im_t1, im_t2, im_ref, fprops] = nextChunk(obj)
             [t1, t2, ref] = next(obj);
             im_t1 = obj.fetch(obj.loaders_.t1, t1);
             im_t2 = obj.fetch(obj.loaders_.t2, t2);
@@ -54,6 +54,22 @@ classdef CDDIterator < handle
             else
                 im_ref = feval(obj.loaders_.ref, ref);
             end
+
+            % File properties of t1, t2, ref
+            % NOTE: Only ref resolution is output
+            [~, t1Name, ~] = fileparts(t1);
+            [~, t2Name, ~] = fileparts(t2);
+            [~, refName, ~] = fileparts(ref);
+            fileSize = size(im_ref);
+            width = fileSize(1); % TODO check if this is the correct order
+            height = fileSize(2);
+            fprops = {
+                t1Name, ... % Name of the t1 file
+                t2Name, ... % Name of the t2 file
+                refName, ... % Name of the ref file
+                width, ... % The width of the ref file
+                height % The height of the ref file
+            };
         end
         
         function [im] = fetch(obj, loader, p)
