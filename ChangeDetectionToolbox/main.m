@@ -75,18 +75,19 @@ iterIdx = 0;
 
 % Loop through all configured options (all combinations)
 for aa = 1:length(ALGS)
-    for dd = 1:length(DATASETS)
-        for tt = 1:length(THRE_ALGS)
-            %% Assign variables
-            ALG = ALGS{aa};
-            DATASET = DATASETS{dd};
-            THRE_ALG = THRE_ALGS{tt};
+    ALG = ALGS{aa};
+    alg = Algorithms.(ALG)(CONFIG_ALGS{aa}{:});
 
-            %% Construct objects
-            alg = Algorithms.(ALG)(CONFIG_ALGS{aa}{:});
-            dataset = Datasets.(DATASET)(CONFIG_DATASETS{dd}{:});
+    for dd = 1:length(DATASETS)
+        DATASET = DATASETS{dd};
+        dataset = Datasets.(DATASET)(CONFIG_DATASETS{dd}{:});
+        
+        for tt = 1:length(THRE_ALGS)
             iterDS = Datasets.CDDIterator(dataset);
+
+            THRE_ALG = THRE_ALGS{tt};
             threAlg = ThreAlgs.(THRE_ALG)(CONFIG_THRE_ALGS{tt}{:});
+
             nMetrics = length(METRICS);
             metrics = cell(1, nMetrics);
             for ii = 1:nMetrics
