@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 import sys
+from osgeo import gdal
 
 from util_functions import *
 
@@ -51,11 +52,14 @@ def downsample_and_threshold(dir, rel_path, fpath, datatype, dir_out, params):
     if not os.path.exists(dir_file_out):
         os.makedirs(dir_file_out)
     
-    image = cv2.imread(fpath)
+    image = None
+    if dataset == 'OSCD':
+        image = gdal.Open(fpath).ReadAsArray() 
+    else:
+        image = cv2.imread(fpath)
     
-    # OSCD has one-band images
-    if params['dataset'] == 'OSCD' or is_binary_file(dir, rel_path, fpath, params['dataset']):
-        image = reduce_to_one_band(image)
+        if is_binary_file(dir, rel_path, fpath, params['dataset']):
+            image = reduce_to_one_band(image)
 
     # Resize the image
     size_1 = int(image.shape[0] * 1 / params['downsample_factor'])
