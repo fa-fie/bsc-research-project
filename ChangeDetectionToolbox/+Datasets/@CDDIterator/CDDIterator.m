@@ -56,13 +56,28 @@ classdef CDDIterator < handle
             end
 
             % File properties of t1, t2, ref
-            % NOTE: Only ref resolution is output
             [~, t1Name, ~] = fileparts(t1);
             [~, t2Name, ~] = fileparts(t2);
             [~, refName, ~] = fileparts(ref);
+            
+            if iscell(t1Name)
+                t1Name = join(t1Name, ',');
+                t1Name = t1Name{1};
+            end
+            if iscell(t2Name)
+                t2Name = join(t2Name, ',');
+                t2Name = t2Name{1};
+            end
+            if iscell(refName)
+                refName = join(refName, ',');
+                refName = refName{1};
+            end
+
+            % NOTE: Only ref resolution is output
             fileSize = size(im_ref);
-            width = fileSize(1); % TODO check if this is the correct order
-            height = fileSize(2);
+            height = fileSize(1);
+            width = fileSize(2);
+            
             fprops = {
                 t1Name, ... % Name of the t1 file
                 t2Name, ... % Name of the t2 file
