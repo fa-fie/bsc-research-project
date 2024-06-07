@@ -12,9 +12,9 @@ classdef OSCDDataset < Datasets.CDDataset
         end
         function initFileSys(obj)
             imgFolder = fullfile(obj.dataPath, 'Onera Satellite Change Detection dataset - Images');
-            labFolder = fullfile(obj.dataPath, 'Onera Satellite Change Detection dataset - Train Labels');
+            labFolder = fullfile(obj.dataPath, 'Onera Satellite Change Detection dataset - Test Labels');
             % Read folder names (training set only)
-            fid = fopen(fullfile(imgFolder, 'train.txt'));
+            fid = fopen(fullfile(imgFolder, 'test.txt'));
             names = fscanf(fid, '%s');
             fclose(fid);
             names = split(names, ',');
