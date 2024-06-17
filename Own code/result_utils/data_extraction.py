@@ -1,19 +1,21 @@
 import os
 import pandas as pd
 
-# Lambdas for calculating metrics
+# Lambdas for calculating metrics/properties
 metric_lambdas = {
     'OA' : lambda x: (x.TP + x.TN) / (x.TP + x.TN + x.FP + x.FN),
-    'Kappa' : lambda x: (2 * (x.TP * x.TN - x.FN * x.FP)) / ((x.TP + x.FP) * (x.FP + x.TN) + (x.TP + x.FN) * (x.FN + x.TN)),
     'FMeasure' : lambda x: x.TP / (x.TP + 1/2 * (x.FP + x.FN)),
     'Precision' : lambda x: x.TP / (x.TP + x.FP),
-    'Recall' : lambda x: x.TP / (x.TP + x.FN)
+    'Recall' : lambda x: x.TP / (x.TP + x.FN),
+    'False Alarm' : lambda x: x.FP / (x.FP + x.TN),
+    'Missed Alarm' : lambda x: x.FN / (x.TP + x.FN)
 }
 
 # Initial resolutions of datasets in m/px
 res_per_ds = {
     'LEVIRCDDataset' : 0.5,
-    'OSCDDataset' : 10
+    'OSCDDataset' : 10,
+    'OSCDDatasetRGBBands' : 10
 }
 
 def merge_list_values(a, b):
@@ -38,6 +40,7 @@ def load_data_to_dataframe(
     add_cols_lambdas['groundN'] = lambda x: x.TN + x.FP
     add_cols_lambdas['groundP'] = lambda x: x.TP + x.FN
     add_cols_lambdas['pChange'] = lambda x: (x.TP + x.FN) / (x.TP + x.TN + x.FP + x.FN)
+    add_cols_lambdas['Size'] = lambda x: x.refWidth * x.refHeight
 
     full_data = {}
     # Read in all the files
