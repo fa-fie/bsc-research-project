@@ -1,0 +1,4 @@
+images/
+dataset_utils/__pycache__
+result_utils/__pycache__
+ignore/
