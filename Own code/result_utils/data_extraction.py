@@ -4,11 +4,21 @@ import pandas as pd
 # Lambdas for calculating metrics/properties
 metric_lambdas = {
     'OA' : lambda x: (x.TP + x.TN) / (x.TP + x.TN + x.FP + x.FN),
-    'FMeasure' : lambda x: x.TP / (x.TP + 1/2 * (x.FP + x.FN)),
+    'FMeasure' : lambda x: \
+        pd.NA if (x.TP + x.FP) == 0 or (x.TP + x.FN) == 0 else \
+            0 if x.TP / (x.TP + x.FP) == 0 and x.TP / (x.TP + x.FN) == 0 else \
+                x.TP / (x.TP + 0.5 * (x.FP + x.FN)),
+        # Precision or recall being NaN: FMeasure also NaN
+        # Precision and recall being 0: FMeasure also 0
+        # Else: usual calculation
     'Precision' : lambda x: x.TP / (x.TP + x.FP),
     'Recall' : lambda x: x.TP / (x.TP + x.FN),
     'False Alarm' : lambda x: x.FP / (x.FP + x.TN),
-    'Missed Alarm' : lambda x: x.FN / (x.TP + x.FN)
+    'Missed Alarm' : lambda x: x.FN / (x.TP + x.FN),
+    'TP perc': lambda x: x.TP / (x.TP + x.TN + x.FP + x.FN),
+    'TN perc': lambda x: x.TN / (x.TP + x.TN + x.FP + x.FN),
+    'FP perc': lambda x: x.FP / (x.TP + x.TN + x.FP + x.FN),
+    'FN perc': lambda x: x.FN / (x.TP + x.TN + x.FP + x.FN)
 }
 
 # Initial resolutions of datasets in m/px
@@ -32,7 +42,8 @@ def load_data_to_dataframe(
 
     add_cols_lambdas = {}
     for metric in metrics_calc:
-        add_cols_lambdas[metric] = metric_lambdas[metric]
+        if metric != 'FMeasure':
+            add_cols_lambdas[metric] = metric_lambdas[metric]
 
     add_cols_lambdas['scaledRes'] = lambda x: x.dsResolution * x.factor
     add_cols_lambdas['mWidth'] = lambda x: x.refWidth * x.dsResolution * x.factor
@@ -56,6 +67,8 @@ def load_data_to_dataframe(
             # Add columns
             file_df['factor'] = int(fname.split('-')[2])
             file_df['dsResolution'] = file_df['dataset'].apply(get_res)
+            if 'FMeasure' in metrics_calc:
+                file_df['FMeasure'] = file_df.apply(metric_lambdas['FMeasure'], axis=1)
             file_df = file_df.assign(**add_cols_lambdas)
 
             # Append
