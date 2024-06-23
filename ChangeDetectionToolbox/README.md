@@ -1,3 +1,6 @@
+# Important acknowledgement
+This code is copied from the [ChangeDetectionToolbox](https://github.com/Bobholamovic/ChangeDetectionToolbox) by [Bobholamovic](https://github.com/Bobholamovic), with some partial changes.
+
 # MATLAB Toolbox for Remote Sensing Change Detection
 
 This repository includes a MATLAB toolbox for **remote sensing change detection** (RSCD) wherein several classical methods are implemented. I'm working on building an open-source, end-to-end, and extensible benchmark framework for the convenience of the RSCD research.
