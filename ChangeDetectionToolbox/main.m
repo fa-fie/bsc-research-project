@@ -42,6 +42,8 @@ end
 % Available algorithms: CVA, DPCA, ImageDiff, ImageRatio, ImageRegr, IRMAD, MAD, PCAkMeans, PCDA
 % Available datasets: AirChangeDataset, BernDataset, OSCDDataset, OttawaDataset, TaizhouDataset, LEVIRCDDataset
 % -> NOTE: For LEVIRCDDataset, the data path needs to include the dataset directory (train/test/val)!
+% -> For OSCDDataset, the OSCDDatasetRGBBands loader is added to only
+% consider RGB bands of the *test set*
 % Available binaryzation algorithms: FixedThre, KMeans, OTSU
 % Available metrics: AUC, FMeasure, Kappa, OA, Recall, UA, ConfusionMatrix
 % -> ConfusionMatrix will output TP, FP, FN, TN absolute values (pixel counts)

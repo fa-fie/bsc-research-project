@@ -14,7 +14,7 @@ classdef OSCDDataset < Datasets.CDDataset
             imgFolder = fullfile(obj.dataPath, 'Onera Satellite Change Detection dataset - Images');
             labFolder = fullfile(obj.dataPath, 'Onera Satellite Change Detection dataset - Test Labels');
             % Read folder names (training set only)
-            fid = fopen(fullfile(imgFolder, 'test.txt'));
+            fid = fopen(fullfile(imgFolder, 'train.txt'));
             names = fscanf(fid, '%s');
             fclose(fid);
             names = split(names, ',');

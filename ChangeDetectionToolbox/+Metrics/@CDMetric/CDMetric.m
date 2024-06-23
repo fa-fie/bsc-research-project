@@ -74,7 +74,7 @@ classdef (Abstract) CDMetric < handle
         function tn = getTN(pred, gnd)
             if ndims(gnd) == 3
                 gnd = gnd(:,:,2);
-                tn = sum(~pred(:) & gnd(:));
+                tn = sum(~pred(:) & ~gnd(:)); # Changed from initial code base
             else
                 tn = sum(~pred(:) & ~gnd(:));
             end
