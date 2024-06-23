@@ -25,8 +25,8 @@ GO_VERBOSE = true;
 % Whether to save the results
 GO_SAVE_RESULTS = true;
 % File to save the results
-FILE_PATH = 'C:\Users\Owner\Documents\University\Y3\Q4\Research Project\Results\';
-GO_OUT_FILE = append(FILE_PATH, 'justtestingyas');% 'LEVIR-factor-1-29.05-testset-cut-IRMAD-CVA-KMeans');
+FILE_PATH = '';
+GO_OUT_FILE = append(FILE_PATH, '');
 
 % If the file already exists, append a number until no file under that name
 % exists
@@ -51,7 +51,7 @@ end
 ALGS = {'IRMAD', 'CVA'}; %, 'DPCA', 'ImageRatio', 'ImageRegr', 'IRMAD', ...
     %'PCAkMeans', 'PCDA'};
 DATASETS = {'LEVIRCDDataset'};
-THRE_ALGS = {'KMeans'};
+THRE_ALGS = {'OTSU'};
 METRICS = {'AUC', 'ConfusionMatrix'};
 %{'OA', 'UA', 'Recall', 'FMeasure', 'AUC', 'Kappa'};
 
@@ -59,7 +59,7 @@ METRICS = {'AUC', 'ConfusionMatrix'};
 CONFIG_BAND_PRE_NORM = {false, true};
 CONFIG_ALGS = {{}, {}, {}, {}, {}, {}, {}, {}, {}};
 CONFIG_DATASETS = {
-    {'C:\Users\Owner\Documents\University\Y3\Q4\Research Project\Datasets\LEVIR-dataset\LEVIR-CD_tiff_downsampled\LEVIR-CD_tiff_factor_16\test'}
+    {''}
 };
 CONFIG_THRE_ALGS = {{}};
 CONFIG_METRICS = {{}, {}, {}, {}, {}, {}};
