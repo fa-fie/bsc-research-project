@@ -18,7 +18,8 @@ metric_lambdas = {
     'TP perc': lambda x: x.TP / (x.TP + x.TN + x.FP + x.FN),
     'TN perc': lambda x: x.TN / (x.TP + x.TN + x.FP + x.FN),
     'FP perc': lambda x: x.FP / (x.TP + x.TN + x.FP + x.FN),
-    'FN perc': lambda x: x.FN / (x.TP + x.TN + x.FP + x.FN)
+    'FN perc': lambda x: x.FN / (x.TP + x.TN + x.FP + x.FN),
+    'IoU': lambda x: (x.TP) / (x.TP + x.FN + x.FP)
 }
 
 # Initial resolutions of datasets in m/px
@@ -65,7 +66,7 @@ def load_data_to_dataframe(
             file_df = pd.read_excel(fpath, header=[0])
 
             # Add columns
-            file_df['factor'] = int(fname.split('-')[2])
+            file_df['factor'] = int(fname.split('-')[2].split('.')[0])
             file_df['dsResolution'] = file_df['dataset'].apply(get_res)
             if 'FMeasure' in metrics_calc:
                 file_df['FMeasure'] = file_df.apply(metric_lambdas['FMeasure'], axis=1)
