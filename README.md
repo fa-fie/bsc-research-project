@@ -1,5 +1,5 @@
 ## Description
-This codebase is part of the [Research Project](https://github.com/TU-Delft-CSE/Research-Project) 2024 of [TU Delft](https://https//github.com/TU-Delft-CSE) and has been used my Bachelor thesis "Conventional Urban Change Detection: The Impact of Spatial Resolution".
+This codebase is part of the [Research Project](https://github.com/TU-Delft-CSE/Research-Project) 2024 of [TU Delft](https://github.com/TU-Delft-CSE) and has been used my Bachelor thesis "Conventional Urban Change Detection: The Impact of Spatial Resolution".
 
 Feel free to contact me in the case of any questions.
 
